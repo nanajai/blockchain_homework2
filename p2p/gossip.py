@@ -29,7 +29,13 @@ def gossip_message(type, message):
     """
     # (you should use send_message as a primitive; also see the config file)
 
-    # (placeholder for 1)
+    for k in config.PEERS:
+        v = config.PEERS[k]
+        if config.node_id == k:
+            continue
+        else:
+            send_message(v, type, message)
+
 
 def handle_message(type, message, sender):
     """ Used to handle an incoming message sent by another node (heh-heh-heyyyy!).
