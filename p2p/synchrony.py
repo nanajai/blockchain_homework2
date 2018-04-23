@@ -25,7 +25,8 @@ def get_curr_round():
     global start_time, round_length
     # Do not round intermediate arithmetic
     #TODO check if should default to some something in case is_started() == false
-    time_elapsed = time.clock() - start_time
+    time_elapsed = time.time() - start_time
+    print(time_elapsed)
     round_number = time_elapsed / round_length
 
     return int(round_number)
@@ -39,7 +40,7 @@ def should_send():
     # Do not round anywhere in this function.  You will need get_curr_round() in addition to the above.
     # WARNING: this needs to be audited for security before production use!
     # specifically w.r.t. timing assumptions at the boundaries of the synchrony assumption
-    current_time = time.clock()
+    current_time = time.time()
     #TODO figure out if should be less than or less than equal to
     start_range = start_time + synchrony_assumption
     end_range = start_time + (2*synchrony_assumption)
@@ -52,7 +53,7 @@ def receive_start_message():
         logging to stdout (see log_synchrony).
     """
     global start_time
-    start_time = time.clock()
+    start_time = time.time()
     log_synchrony()
 
     # placeholder for (2.1)
