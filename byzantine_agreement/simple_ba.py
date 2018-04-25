@@ -52,12 +52,17 @@ class SimplePKIBA:
                 list of str: Returns a list of proposals to broadcast votes for.
         """
         # Get all proposals with r votes, including sender
+        all_proposals = self.get_proposals_with_threshold(round)
+        proposals_broadcast = []
+        for prop in all_proposals:
+            if prop not in self.s_i:
+                self.s_i.append(prop)
+                self.votes[prop].add(config.node_id)
+                proposal_sig = util.sign_message(prop, config.SECRET_KEYS[config.node_id])
+                self.signatures[prop].append([config.node_id, proposal_sig])
+                proposals_broadcast.append(prop)
 
-        # placeholder for (3.1)
-                # proposal is new proposal that has just achieved threshold (m not in Sj)
-                # Pseudocode: then j adds m to its set Sj, signs m using its secret key skj, and multicasts...
-
-        return []
+        return proposals_broadcast
 
     def get_proposals_with_threshold(self, round):
         """ Gets proposals that have reached the threshold required by a given round.
@@ -71,10 +76,19 @@ class SimplePKIBA:
 
             This function *DOES NOT* need to check signatures; assume they are already checked in process_vote.
         """
-        # Pseudocode: with signatures from r different players, including player s
 
-        # placeholder for (3.2)
-        return []
+        # Pseudocode: with signatures from r different players, including player s
+        eligibleProps = []
+
+        for prop in self.votes:
+            #Checks to see if any votes for prop, and if votes for prop is greater than or equal too round and also that 1 voted
+            nonEmptyVotes = len(self.votes[prop]) > 0
+            senderVoted = 1 in self.votes[prop]
+            votesRounds = len(self.votes[prop]) >= round
+            if nonEmptyVotes and votesRounds and senderVoted:
+                eligibleProps.append(prop)
+
+        return eligibleProps
 
     def broadcast_votes_for(self, round, votes):
         """ Broadcast votes on a proposal to all nodes; this happens once a proposal is added to s_i. """
@@ -117,9 +131,13 @@ class SimplePKIBA:
     def get_output(self):
         """ Returns the final output of agreement once the protocol has completed, and None before then. """
         # Pseudocode: (Output) Each player i outputs 0 if |Si| > 1 and otherwise outputs the unique element in Si.
-
-        # placeholder for (3.3)
-        return []
+        output = 0
+        if not self.is_done():
+            return None
+        if len(self.s_i) == 1:
+            output = self.s_i[0]
+    
+        return output
 
     @run_async
     def run_protocol_loop(self):
