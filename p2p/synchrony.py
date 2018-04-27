@@ -24,9 +24,12 @@ def get_curr_round():
     """
     global start_time, round_length
     # Do not round intermediate arithmetic
+    round_number = None
+    if is_started():
+        time_elapsed = time.time() - start_time
+        round_number = int(time_elapsed / round_length)
 
-    # placeholder for (2.2)
-    return 0
+    return round_number
 
 def should_send():
     """ Determine whether a node should be sending messages when queried.
@@ -37,8 +40,16 @@ def should_send():
     # Do not round anywhere in this function.  You will need get_curr_round() in addition to the above.
     # WARNING: this needs to be audited for security before production use!
     # specifically w.r.t. timing assumptions at the boundaries of the synchrony assumption
+    #TODO figure out if should be less than or less than equal to
+    if not is_started():
+        return None
 
-    # placeholder for (2.3)
+    current_time = time.time()
+    start_range = (start_time + synchrony_assumption) + (get_curr_round()*round_length)
+    end_range = (start_time + (2*synchrony_assumption)) + (get_curr_round()*round_length)
+
+    if start_range <= current_time and current_time <= end_range:
+        return True
     return False
 
 def receive_start_message():
@@ -46,6 +57,8 @@ def receive_start_message():
         logging to stdout (see log_synchrony).
     """
     global start_time
+    start_time = time.time()
+    log_synchrony()
 
     # placeholder for (2.1)
 

@@ -28,7 +28,7 @@ suite = unittest.TestLoader().loadTestsFromTestCase(BAProposalsTest)
 unittest.TextTestRunner(verbosity=2).run(suite)
 
 # Test for (3.2) - ba_votes
-suite = unittest.TestLoader().loadTestsFromTestCase(BAProposalsTest)
+suite = unittest.TestLoader().loadTestsFromTestCase(BAVotesTest)
 unittest.TextTestRunner(verbosity=2).run(suite)
 
 # Test for (3.3) - ba_output
